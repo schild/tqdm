@@ -340,8 +340,6 @@ def test_all_defaults():
     with closing(UnicodeIO()) as our_file:
         with tqdm(range(10), file=our_file) as progressbar:
             assert len(progressbar) == 10
-            for _ in progressbar:
-                pass
     # restore stdout/stderr output for `nosetest` interface
     # try:
     #     sys.stderr.write('\x1b[A')
@@ -671,23 +669,17 @@ def test_dynamic_min_iters():
     with closing(StringIO()) as our_file:
         t = tqdm(_range(10), file=our_file, miniters=None, mininterval=None,
                  smoothing=0.5)
-        for _ in t:
-            pass
         assert t.dynamic_miniters
 
     # No smoothing
     with closing(StringIO()) as our_file:
         t = tqdm(_range(10), file=our_file, miniters=None, mininterval=None,
                  smoothing=0)
-        for _ in t:
-            pass
         assert t.dynamic_miniters
 
     # No dynamic_miniters (miniters is fixed manually)
     with closing(StringIO()) as our_file:
         t = tqdm(_range(10), file=our_file, miniters=1, mininterval=None)
-        for _ in t:
-            pass
         assert not t.dynamic_miniters
 
 
@@ -979,8 +971,6 @@ def test_smoothing():
         with tqdm(_range(3), file=our_file, smoothing=None, leave=True) as t:
             cpu_timify(t, timer)
 
-            for _ in t:
-                pass
         assert '| 3/3 ' in our_file.getvalue()
 
     # -- Test smoothing
