@@ -205,7 +205,7 @@ def _is_utf(encoding):
         return False
     except Exception:
         try:
-            return encoding.lower().startswith('utf-') or ('U8' == encoding)
+            return encoding.lower().startswith('utf-') or encoding == 'U8'
         except Exception:
             return False
     else:
@@ -221,10 +221,7 @@ def _supports_unicode(fp):
 
 def _is_ascii(s):
     if isinstance(s, str):
-        for c in s:
-            if ord(c) > 255:
-                return False
-        return True
+        return all(ord(c) <= 255 for c in s)
     return _supports_unicode(s)
 
 

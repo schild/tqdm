@@ -72,10 +72,7 @@ class tqdm_tk(std_tqdm):  # pragma: no cover
             except AttributeError:
                 raise AttributeError(
                     "`tk_parent` required when using `tkinter.NoDefaultRoot()`")
-            if tk_parent is None:  # use new default root window as display
-                self._tk_window = tkinter.Tk()
-            else:  # some other windows already exist
-                self._tk_window = tkinter.Toplevel()
+            self._tk_window = tkinter.Tk() if tk_parent is None else tkinter.Toplevel()
         else:
             self._tk_window = tkinter.Toplevel(tk_parent)
 

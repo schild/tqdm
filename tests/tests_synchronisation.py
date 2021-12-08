@@ -126,7 +126,7 @@ def test_monitoring_and_cleanup():
 
     with closing(StringIO()) as our_file:
         with tqdm(total=total, file=our_file, miniters=500, mininterval=0.1,
-                  maxinterval=maxinterval) as t:
+                          maxinterval=maxinterval) as t:
             cpu_timify(t, Time)
             # Do a lot of iterations in a small timeframe
             # (smaller than monitor interval)
@@ -139,7 +139,7 @@ def test_monitoring_and_cleanup():
             t.update(1)
             # Wait for the monitor to get out of sleep's loop and update tqdm.
             timeend = Time.time()
-            while not (t.monitor.woken >= timeend and t.miniters == 1):
+            while t.monitor.woken < timeend or t.miniters != 1:
                 Time.fake_sleep(1)  # Force awake up if it woken too soon
             assert t.miniters == 1  # check that monitor corrected miniters
             # Note: at this point, there may be a race condition: monitor saved
@@ -169,10 +169,10 @@ def test_monitoring_multi():
 
     with closing(StringIO()) as our_file:
         with tqdm(total=total, file=our_file, miniters=500, mininterval=0.1,
-                  maxinterval=maxinterval) as t1:
+                          maxinterval=maxinterval) as t1:
             # Set high maxinterval for t2 so monitor does not need to adjust it
             with tqdm(total=total, file=our_file, miniters=500, mininterval=0.1,
-                      maxinterval=1E5) as t2:
+                                  maxinterval=1E5) as t2:
                 cpu_timify(t1, Time)
                 cpu_timify(t2, Time)
                 # Do a lot of iterations in a small timeframe
@@ -187,7 +187,7 @@ def test_monitoring_multi():
                 t2.update(1)
                 # Wait for the monitor to get out of sleep and update tqdm
                 timeend = Time.time()
-                while not (t1.monitor.woken >= timeend and t1.miniters == 1):
+                while t1.monitor.woken < timeend or t1.miniters != 1:
                     Time.fake_sleep(1)
                 assert t1.miniters == 1  # check that monitor corrected miniters
                 assert t2.miniters == 500  # check that t2 was not adjusted
